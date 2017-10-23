@@ -1,6 +1,6 @@
 # Emailshutdown
 ____
-###前言
+###前言###
 >　　自从爱上Python后，觉得这门语言真的是太方便了，他的设计极大的增强了代码的可读性，学习起来也更加平缓，可以很快的具备生产力，现在只要看到能批量操作的东西，都想用代码来将他实现。要成为专家还是要深入的学习才行，而不是像我这样乱搞，乱搞，乱搞。
 　　python不仅是一个完成工作的工具，而且还是非常享受他的编程的过程。在前几篇的文章中，其中有一篇是个关于搭建Ubuntu邮件服务器，来进行一系列的操作，是为了不消耗我自己，这里还要对邮件在进行编辑，完成远程一键关机，这个关机使用邮件而不是远程的连接。 
 　　为什么会有这个想法呢？原因是我晚上在实验室学习一半的时候，出去去吃饭，然后就不不想回去了，或者去上课的时候没关电脑（当时想着我一定还能回来在学会，结果就直接的玩去了。什么学习都抛到脑后）这样一来电脑就会在LAB咆哮一夜，不仅浪费电，还伤害我的电脑，然后就傻傻给别人发短信，帮我把电脑管了吧!这样感觉不仅麻烦自己，还麻烦别人。于是想到这python的功能，做一个关闭计算机的程序。
@@ -9,20 +9,24 @@ ____
 
 
 ___
-###预期达成效果
+###预期达成效果###
+
 通过用手机，或者电脑发送一份邮件给我的邮箱，电脑过一段时间自己关机。这个装逼的程度不下于神舟上天。
+
 **演示**
 
 ![快进了30倍的Gif](http://upload-images.jianshu.io/upload_images/6967995-4b31f8e9053f4a7c.gif?imageMogr2/auto-orient/strip)
 
 ___
 
-###执行计划
+###执行计划###
+
 用python写下一串代码
 邮件开启授权客户端密码和pop3&smtp
 
 ___
-###smtp和pop
+
+###smtp和pop###
 
 **SMTP**(Simple Mail Transfer Protoco)简单邮件传输协议
 *　　SMTP是一个相对简单的基于[文本](https://zh.wikipedia.org/wiki/%E6%96%87%E6%9C%AC)的[协议](https://zh.wikipedia.org/wiki/TCP/IP%E5%8D%8F%E8%AE%AE)。在其之上指定了一条[消息](https://zh.wikipedia.org/wiki/%E6%B6%88%E6%81%AF)的一个或多个接收者（在大多数情况下被确认是存在的），然后消息文本会被传输。可以很简单地通过[telnet](https://zh.wikipedia.org/wiki/Telnet)程序来测试一个SMTP服务器。SMTP使用[TCP](https://zh.wikipedia.org/wiki/TCP)端口25。要为一个给定的域名决定一个SMTP服务器，需要使用MX (Mail eXchange) [DNS](https://zh.wikipedia.org/wiki/DNS)。
@@ -49,35 +53,38 @@ ___
 　　另外可讲sleep设置时间间断缩小，来达到秒响应的效果。
 
 **设置参数**
-````
-#设置的参数登录帐号 邮箱 密码
-smtpserver = 'smtp.163.com'    #发邮件邮箱服务
-poplibserver = 'pop.163.com'    #查看邮件服务
-sender = 'xxxxxxxxx@163.com' # 邮件登陆着，发件人
-passwd =  '****** # 登录邮件的授权密码
-receive = 'xxxxxxxxx@163.com' #接受者的邮箱，换成列表就可以多个发送
-`````
-**构造一封邮件发送**
-````
-#设置发送内容的
-emailsubject = '重置获取命令的选项，不做任何的操作'
-emailtitle = 'this is meishayong email'
-#构造一封邮件
-message = MIMEText(emailtitle, 'plain', 'utf-8') #plain文本的格式
-message['Subject'] = Header(emailsubject, 'utf-8')
-message['From'] = sender
-message['To'] = receive
 
-# print(message.as_string())
-#登录邮箱，给本邮箱发送邮件一封
-smtp = SMTP_SSL(smtpserver) #连接到服务器
-smtp.login(sender,passwd)   #登录到邮箱
-smtp.sendmail(sender, receive, message.as_string())
-smtp.quit()
-````
+
+    #设置的参数登录帐号 邮箱 密码
+    smtpserver = 'smtp.163.com'    #发邮件邮箱服务
+    poplibserver = 'pop.163.com'    #查看邮件服务
+    sender = 'xxxxxxxxx@163.com' # 邮件登陆着，发件人
+    passwd =  '****** # 登录邮件的授权密码
+    receive = 'xxxxxxxxx@163.com' #接受者的邮箱，换成列表就可以多个发送
+
+**构造一封邮件发送**
+ 
+    #设置发送内容的
+    emailsubject = '重置获取命令的选项，不做任何的操作'
+    emailtitle = 'this is meishayong email'
+    #构造一封邮件
+    message = MIMEText(emailtitle, 'plain', 'utf-8') #plain文本的格式
+    message['Subject'] = Header(emailsubject, 'utf-8')
+    message['From'] = sender
+    message['To'] = receive
+
+    #print(message.as_string())
+    #登录邮箱，给本邮箱发送邮件一封
+    smtp = SMTP_SSL(smtpserver) #连接到服务器
+    smtp.login(sender,passwd)   #登录到邮箱
+    smtp.sendmail(sender, receive, message.as_string())
+    smtp.quit()
+
+
 **登录邮箱获取邮箱内容**
-````
-# 登录邮件获取第一封邮件的主题内容
+
+
+    # 登录邮件获取第一封邮件的主题内容
     reademail = poplib.POP3(poplibserver)#连接到POP3服务器
     reademail.user(sender)
     reademail.pass_(passwd)
@@ -99,10 +106,9 @@ smtp.quit()
             getsubject = emailSublist[0][0]
         return getsubject
     getobject = Getobject()
-````
+
 **执行关机命令**
 
-````
 
     print("*********************寻找主题******************")
     print("**                                          **")
@@ -130,17 +136,17 @@ smtp.quit()
         time.sleep(36)
     os.system('cls')#清屏处理
 
-````
-
 
 
 
 ____
 
-###代码
+###代码###
 
 
 
-___
-###总结
+[github](https://github.com/Hatcat123/Emailshutdown)
+
+###总结###
+
 冲动的想法构建了此项应用，为了好玩和方便自己，代码写的不够pythonic，还希望你多多包涵。转载使用的时候请获得作者同意，也欢迎你的赞赏。
